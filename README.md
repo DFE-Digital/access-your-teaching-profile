@@ -72,3 +72,7 @@ You'll also need to configure your editor's `solargraph` plugin to
 ```diff
 +  "solargraph.useBundler": true,
 ```
+
+## Licence
+
+[MIT Licence](LICENCE).
