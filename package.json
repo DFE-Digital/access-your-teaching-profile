@@ -4,6 +4,7 @@
   "dependencies": {
     "esbuild": "^0.15.8",
     "govuk-frontend": "4.0.1",
+    "govuk-prototype-components": "^1.0.0",
     "sass": "^1.54.9"
   },
   "scripts": {
