@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+    types:
+      - labeled
+      - synchronize
+      - reopened
+      - opened
+      - converted_to_draft
+
+env:
+  CONTAINER_REGISTRY: ghcr.io
+
+jobs:
+  docker:
+    name: Docker build and push
+    if: contains(github.event.pull_request.labels.*.name, 'deploy') || github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      docker_image: ${{ steps.dockerimage.outputs.docker_image_tag }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/workflows/actions/build-docker
+        id: dockerimage
+        with:
+          github_username: ${{ github.actor }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
