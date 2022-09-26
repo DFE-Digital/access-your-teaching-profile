@@ -27,7 +27,6 @@ We adopt the following ADRs wholesale and agree to follow their decisions:
 
 - [2. Use Devise for authentication](https://github.com/DFE-Digital/apply-for-teacher-training/blob/main/adr/0002-use-devise-for-authentication.md)
 
-
 ### Clarifications
 
 - This service will be using an authentication flow based on OpenID Connect (given ongoing work on [Get an identity](https://github.com/DFE-Digital/get-an-identity)).
