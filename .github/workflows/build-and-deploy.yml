@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
@@ -32,3 +31,39 @@ jobs:
         with:
           github_username: ${{ github.actor }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy_nonprod:
+    name: Deploy to ${{ matrix.environment }} environment
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    concurrency: deploy_${{ matrix.environment }}
+    needs: [docker]
+    strategy:
+      max-parallel: 1
+      matrix:
+        environment: [dev]
+    environment:
+      name: ${{ matrix.environment }}
+      url: ${{ steps.deploy.outputs.environment_url }}
+    outputs:
+      environment_url: ${{ steps.deploy.outputs.environment_url }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker image tag
+        id: image
+        run: |
+          echo ::set-output name=tag::$CONTAINER_REGISTRY/$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]'):$GITHUB_SHA
+        env:
+          CONTAINER_REGISTRY: ${{ env.CONTAINER_REGISTRY }}
+        shell: bash
+
+      - uses: ./.github/workflows/actions/deploy-environment
+        id: deploy
+        with:
+          environment_name: ${{ matrix.environment }}
+          image_tag: ${{ github.sha }}
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+
