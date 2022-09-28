@@ -17,4 +17,4 @@ test:
 production:
   <<: *default
   database: access_your_teaching_profile_production
-  password: <%= ENV["ACCESS_YOUR_TEACHING_PROFILE_DATABASE_PASSWORD"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
