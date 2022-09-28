@@ -12,10 +12,13 @@
 .idea
 .vscode
 app/assets/builds/*
-config/master.key
 db/*.sqlite3
 log/*
 node_modules
 public/assets
 tmp/*
 tmp/pids/*
+
+# Development and production master keys
+config/master.key
+/config/credentials/production.key
