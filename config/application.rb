@@ -14,6 +14,8 @@ require "action_view/railtie"
 require "action_cable/engine"
 require "rails/test_unit/railtie"
 
+require "./app/lib/hosting_environment"
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -36,5 +38,14 @@ module AccessYourTeachingProfile
     )
 
     config.exceptions_app = routes
+
+    config.credentials.content_path =
+      (
+        if HostingEnvironment.test_environment?
+          "config/credentials.yml.enc"
+        else
+          "config/credentials/production.yml.enc"
+        end
+      )
   end
 end
