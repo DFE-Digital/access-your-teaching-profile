@@ -58,7 +58,6 @@ RUN rm -rf node_modules log/* tmp/* /tmp && \
 FROM ruby:3.1.2-alpine as production
 
 ENV RAILS_ENV=production
-
 # The application runs from /app
 WORKDIR /app
 
@@ -74,20 +73,10 @@ RUN apk add --no-cache libpq
 COPY --from=builder /app /app
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 
-# SSH access specific to Azure
-# Install OpenSSH and set the password for root to "Docker!".
-RUN apk add --no-cache openssh && echo "root:Docker!" | chpasswd
-
-# Copy the sshd_config file to the /etc/ssh/ directory
-COPY .sshd_config /etc/ssh/sshd_config
-
-# Copy and configure the ssh_setup file
-RUN mkdir -p /tmp
-COPY .ssh_setup /tmp/ssh_setup.sh
-RUN chmod +x /tmp/ssh_setup.sh && (sleep 1;/tmp/ssh_setup.sh 2>&1 > /dev/null)
-
-# Open port 2222 for SSH access
-EXPOSE 80 2222
+EXPOSE 80
 
 CMD bundle exec rails db:migrate && \
     bundle exec rails server -b 0.0.0.0
+
+ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
