@@ -75,6 +75,7 @@ gem "govuk-components"
 gem "govuk_design_system_formbuilder"
 
 group :development, :test do
+  gem "dotenv-rails"
   gem "rspec"
   gem "rspec-rails"
 end
