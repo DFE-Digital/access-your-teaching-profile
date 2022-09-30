@@ -11,6 +11,8 @@ FROM ruby:3.1.2-alpine as builder
 
 WORKDIR /app
 
+ENV RAILS_ENV=production
+
 # Add the timezone (builder image) as it's not configured by default in Alpine
 RUN apk add --update --no-cache tzdata && \
     cp /usr/share/zoneinfo/Europe/London /etc/localtime && \
@@ -40,7 +42,7 @@ RUN yarn install --frozen-lockfile --check-files
 COPY . .
 
 # Precompile assets
-RUN RAILS_ENV=production SECRET_KEY_BASE=required-to-run-but-not-used \
+RUN SECRET_KEY_BASE=required-to-run-but-not-used \
     bundle exec rails assets:precompile
 
 # Cleanup to save space in the production image
@@ -54,6 +56,8 @@ RUN rm -rf node_modules log/* tmp/* /tmp && \
 
 # Build runtime image
 FROM ruby:3.1.2-alpine as production
+
+ENV RAILS_ENV=production
 
 # The application runs from /app
 WORKDIR /app
