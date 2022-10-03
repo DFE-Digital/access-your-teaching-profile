@@ -164,6 +164,7 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.13.8-x86_64-linux)
       racc (~> 1.4)
+    okcomputer (1.18.4)
     pagy (5.10.1)
       activesupport
     parallel (1.22.1)
@@ -346,6 +347,7 @@ DEPENDENCIES
   govuk-components
   govuk_design_system_formbuilder
   jsbundling-rails
+  okcomputer
   pg (~> 1.1)
   prettier_print
   propshaft
