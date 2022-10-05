@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   root to: "pages#home"
+  get "_sha", to: ->(_) { [200, {}, [`git rev-parse HEAD`.chomp]] }
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
