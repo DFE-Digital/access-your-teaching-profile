@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   root to: "pages#home"
-  get "_sha", to: ->(_) { [200, {}, [`git rev-parse HEAD`.chomp]] }
+  get "_sha", to: ->(_) { [200, {}, [ENV.fetch("GIT_SHA", "")]] }
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
