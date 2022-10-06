@@ -107,7 +107,7 @@ runs:
       if: ${{ steps.terraform.outputs.blue_green == 'true' }}
       with:
         inlineScript: |
-          az webapp deployment slot swap  -g ${{ steps.config.outputs.resource_group_name }} -n ${{ steps.config.outputs.resource_prefix }}getanid-${{ inputs.environment_name}}-auths-app --slot ${{ steps.terraform.outputs.slot_name}} --target-slot production
+          az webapp deployment slot swap  -g ${{ steps.config.outputs.resource_group_name }} -n ${{ steps.config.outputs.resource_prefix }}aytp-${{ inputs.environment_name}}-app --slot ${{ steps.terraform.outputs.slot_name}} --target-slot production
 
     - name: Check new site is up
       run: |
