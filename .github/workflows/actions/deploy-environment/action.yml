@@ -51,10 +51,10 @@ runs:
           exit 1
         fi
 
-        echo ::set-output name=resource_group_name::$RESOURCE_GROUP_NAME
-        echo ::set-output name=key_vault_name::$KEY_VAULT_NAME
-        echo ::set-output name=resource_prefix::$RESOURCE_PREFIX
-        echo ::set-output name=storage_account_name::$STORAGE_ACCOUNT_NAME
+        echo "resource_group_name=$RESOURCE_GROUP_NAME" >> $GITHUB_ENV
+        echo "key_vault_name=$KEY_VAULT_NAME" >> $GITHUB_ENV
+        echo "resource_prefix=$RESOURCE_PREFIX" >> $GITHUB_ENV
+        echo "storage_account_name=$STORAGE_ACCOUNT_NAME" >> $GITHUB_ENV
 
       shell: bash
       env:
@@ -67,7 +67,7 @@ runs:
 
     - name: Get TFSTATE-CONTAINER-ACCESS-KEY
       run: |
-        TFSTATE_CONTAINER_ACCESS_KEY="$(az storage account keys list -g ${{ steps.config.outputs.resource_group_name }} -n ${{ steps.config.outputs.storage_account_name }} | jq -r '.[0].value')"
+        TFSTATE_CONTAINER_ACCESS_KEY="$(az storage account keys list -g ${{ env.resource_group_name }} -n ${{ env.storage_account_name }} | jq -r '.[0].value')"
         echo "::add-mask::$TFSTATE_CONTAINER_ACCESS_KEY"
         echo "TFSTATE_CONTAINER_ACCESS_KEY=$TFSTATE_CONTAINER_ACCESS_KEY" >> $GITHUB_ENV
       shell: bash
@@ -81,15 +81,15 @@ runs:
       id: terraform
       run: |
         make ci ${{ inputs.environment_name }} terraform-apply
-        cd terraform && echo ::set-output name=url::https://$(terraform output -raw app_fqdn)/
-        echo ::set-output name=postgres_server_name::$(terraform output -raw postgres_server_name)
+        cd terraform && echo "url=https://$(terraform output -raw app_fqdn)/" >> $GITHUB_ENV
+        echo "postgres_server_name=$(terraform output -raw postgres_server_name)" >> $GITHUB_ENV
         blue_green=$(terraform output -raw blue_green)
-        echo ::set-output name=blue_green::$blue_green
+        echo "blue_green=$blue_green" >> $GITHUB_ENV
 
         if [ "$blue_green" = "true" ]; then
-          echo ::set-output name=slot_name::$(terraform output -raw web_app_slot_name)
+          echo "slot_name=$(terraform output -raw web_app_slot_name)" >> $GITHUB_ENV
         else
-          echo ::set-output name=slot_name::production
+          echo "slot_name=production" >> $GITHUB_ENV
         fi
       env:
         ARM_ACCESS_KEY: ${{ env.TFSTATE_CONTAINER_ACCESS_KEY }}
@@ -99,7 +99,7 @@ runs:
 
     - uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ steps.config.outputs.resource_prefix }}aytp-${{ inputs.environment_name}}-app
+        app-name: ${{ env.resource_prefix }}aytp-${{ inputs.environment_name}}-app
         images: ghcr.io/dfe-digital/access-your-teaching-profile:${{ github.sha }}
         slot-name: ${{ steps.terraform.outputs.slot_name }}
 
@@ -107,23 +107,25 @@ runs:
       if: ${{ steps.terraform.outputs.blue_green == 'true' }}
       with:
         inlineScript: |
-          az webapp deployment slot swap  -g ${{ steps.config.outputs.resource_group_name }} -n ${{ steps.config.outputs.resource_prefix }}aytp-${{ inputs.environment_name}}-app --slot ${{ steps.terraform.outputs.slot_name}} --target-slot production
+          az webapp deployment slot swap  -g ${{ env.resource_group_name }} -n ${{ env.resource_prefix }}aytp-${{ inputs.environment_name}}-app --slot ${{ steps.terraform.outputs.slot_name}} --target-slot production
 
     - name: Check new site is up
       run: |
+        echo "Checking new site is up"
         attempt_counter=0
         max_attempts=60
-        SHA_URL=https://${{ steps.config.outputs.resource_prefix }}aytp-${{ inputs.environment_name }}-app.azurewebsites.net/_sha
-        APP_SHA=$(curl $SHA_URL)
+
+        SHA_URL="${{ env.url }}_sha"
+        APP_SHA=$(curl $SHA_URL --silent)
         until [[ "$EXPECTED_SHA" == "$APP_SHA" ]]; do
             if [ ${attempt_counter} -eq ${max_attempts} ];then
               echo "Max attempts reached"
               exit 1
             fi
-            APP_SHA=$(curl $SHA_URL)
-            printf '.'
-            attempt_counter=$(($attempt_counter+1))
+            echo "Attempt $attempt_counter: new site not up, retrying in 5 seconds ..."
             sleep 5
+            attempt_counter=$(($attempt_counter+1))
+            APP_SHA=$(curl $SHA_URL --silent)
         done
       shell: bash
       env:
