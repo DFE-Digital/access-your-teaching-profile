@@ -94,11 +94,6 @@ variable "log_analytics_sku" {
   default = "PerGB2018"
 }
 
-variable "docker_image" {
-  type    = string
-  default = "ghcr.io/dfe-digital/access-your-teaching-profile"
-}
-
 variable "enable_blue_green" {
   type    = bool
   default = false

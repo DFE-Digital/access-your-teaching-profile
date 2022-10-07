@@ -22,3 +22,6 @@ tmp/pids/*
 # Development and production master keys
 config/master.key
 /config/credentials/production.key
+
+# Makefile script
+bin/fetch_config.rb
