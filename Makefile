@@ -49,6 +49,14 @@ review:
 	$(eval backend_config=-backend-config="key=review/review$(env).tfstate")
 	$(eval export TF_VAR_app_suffix=$(env))
 
+.PHONY: domain
+domain:
+	$(eval DEPLOY_ENV=production)
+	$(eval AZURE_SUBSCRIPTION=s165-teachingqualificationsservice-production)
+	$(eval RESOURCE_NAME_PREFIX=s165p01)
+	$(eval ENV_SHORT=pd)
+	$(eval ENV_TAG=prod)
+
 
 ci:	## Run in automation environment
 	$(eval DISABLE_PASSCODE=true)
@@ -114,3 +122,7 @@ deploy-azure-resources: set-azure-account tags # make dev deploy-azure-resources
 
 validate-azure-resources: set-azure-account  tags# make dev validate-azure-resources
 	az deployment sub create -l "West Europe" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/main/azure/resourcedeploy.json" --parameters "resourceGroupName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-rg" 'tags=${RG_TAGS}' "environment=${DEPLOY_ENV}" "tfStorageAccountName=${RESOURCE_NAME_PREFIX}aytptfstate${ENV_SHORT}" "tfStorageContainerName=aytp-tfstate" "dbBackupStorageAccountName=${AZURE_BACKUP_STORAGE_ACCOUNT_NAME}" "dbBackupStorageContainerName=${AZURE_BACKUP_STORAGE_CONTAINER_NAME}" "keyVaultName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-kv" --what-if
+
+domain-azure-resources: set-azure-account tags # make domain domain-azure-resources CONFIRM_DEPLOY=1
+	$(if $(CONFIRM_DEPLOY), , $(error can only run with CONFIRM_DEPLOY))
+	az deployment sub create -l "West Europe" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/main/azure/resourcedeploy.json" --parameters "resourceGroupName=${RESOURCE_NAME_PREFIX}-aytpdomains-rg" 'tags=${RG_TAGS}' "environment=${DEPLOY_ENV}" "tfStorageAccountName=${RESOURCE_NAME_PREFIX}aytpdomainstf" "tfStorageContainerName=aytpdomains-tf"  "keyVaultName=${RESOURCE_NAME_PREFIX}-aytpdomains-kv"
