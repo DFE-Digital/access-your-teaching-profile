@@ -105,6 +105,8 @@ variable "worker_count" {
   default     = null
 }
 
+variable "domain" {}
+
 locals {
   hosting_environment          = var.environment_name
   aytp_app_name                = "${var.resource_prefix}aytp-${var.environment_name}${var.app_suffix}-app"
