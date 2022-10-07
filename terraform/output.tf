@@ -1,5 +1,5 @@
 output "app_fqdn" {
-  value = azurerm_linux_web_app.aytp-app.default_hostname
+  value = var.domain
 }
 output "postgres_server_name" {
   value = azurerm_postgresql_flexible_server.postgres-server.name

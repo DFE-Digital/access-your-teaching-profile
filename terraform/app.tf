@@ -126,6 +126,20 @@ resource "azurerm_linux_web_app" "aytp-app" {
     http2_enabled       = true
     minimum_tls_version = "1.2"
     health_check_path   = "/health"
+    ip_restriction = [{
+      name     = "FrontDoor"
+      action   = "Allow"
+      priority = 1
+      headers = [{
+        x_azure_fdid      = [local.infrastructure_secrets.FRONTDOOR_ID]
+        x_fd_health_probe = []
+        x_forwarded_for   = []
+        x_forwarded_host  = []
+      }]
+      service_tag               = "AzureFrontDoor.Backend"
+      ip_address                = null
+      virtual_network_subnet_id = null
+    }]
   }
 
   app_settings = local.aytp_env_vars
