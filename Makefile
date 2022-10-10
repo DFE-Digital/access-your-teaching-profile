@@ -37,7 +37,7 @@ production:
 	$(eval RESOURCE_NAME_PREFIX=s165p01)
 	$(eval ENV_SHORT=pd)
 	$(eval ENV_TAG=prod)
-	$(eval AZURE_BACKUP_STORAGE_ACCOUNT_NAME=s165p01dbbackup)
+	$(eval AZURE_BACKUP_STORAGE_ACCOUNT_NAME=s165p01aytpdbbackuppd)
 	$(eval AZURE_BACKUP_STORAGE_CONTAINER_NAME=aytp)
 
 .PHONY: review
@@ -106,7 +106,7 @@ terraform-destroy: terraform-init
 
 deploy-azure-resources: set-azure-account tags # make dev deploy-azure-resources CONFIRM_DEPLOY=1
 	$(if $(CONFIRM_DEPLOY), , $(error can only run with CONFIRM_DEPLOY))
-	az deployment sub create -l "West Europe" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/main/azure/resourcedeploy.json" --parameters "resourceGroupName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-rg" 'tags=${RG_TAGS}' "environment=${DEPLOY_ENV}" "tfStorageAccountName=${RESOURCE_NAME_PREFIX}aytptfstate${ENV_SHORT}" "tfStorageContainerName=aytp-tfstate" "dbBackupStorageAccountName=false" "dbBackupStorageContainerName=false" "keyVaultName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-kv"
+	az deployment sub create -l "West Europe" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/main/azure/resourcedeploy.json" --parameters "resourceGroupName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-rg" 'tags=${RG_TAGS}' "environment=${DEPLOY_ENV}" "tfStorageAccountName=${RESOURCE_NAME_PREFIX}aytptfstate${ENV_SHORT}" "tfStorageContainerName=aytp-tfstate" "dbBackupStorageAccountName=${AZURE_BACKUP_STORAGE_ACCOUNT_NAME}" "dbBackupStorageContainerName=${AZURE_BACKUP_STORAGE_CONTAINER_NAME}" "keyVaultName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-kv"
 
 validate-azure-resources: set-azure-account  tags# make dev validate-azure-resources
-	az deployment sub create -l "West Europe" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/main/azure/resourcedeploy.json" --parameters "resourceGroupName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-rg" 'tags=${RG_TAGS}' "environment=${DEPLOY_ENV}" "tfStorageAccountName=${RESOURCE_NAME_PREFIX}aytptfstate${ENV_SHORT}" "tfStorageContainerName=aytp-tfstate" "dbBackupStorageAccountName=false" "dbBackupStorageContainerName=false" "keyVaultName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-kv" --what-if
+	az deployment sub create -l "West Europe" --template-uri "https://raw.githubusercontent.com/DFE-Digital/tra-shared-services/main/azure/resourcedeploy.json" --parameters "resourceGroupName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-rg" 'tags=${RG_TAGS}' "environment=${DEPLOY_ENV}" "tfStorageAccountName=${RESOURCE_NAME_PREFIX}aytptfstate${ENV_SHORT}" "tfStorageContainerName=aytp-tfstate" "dbBackupStorageAccountName=${AZURE_BACKUP_STORAGE_ACCOUNT_NAME}" "dbBackupStorageContainerName=${AZURE_BACKUP_STORAGE_CONTAINER_NAME}" "keyVaultName=${RESOURCE_NAME_PREFIX}-aytp-${ENV_SHORT}-kv" --what-if

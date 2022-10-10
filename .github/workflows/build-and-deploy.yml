@@ -65,5 +65,3 @@ jobs:
           environment_name: ${{ matrix.environment }}
           image_tag: ${{ github.sha }}
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-
-
