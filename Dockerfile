@@ -79,7 +79,7 @@ RUN apk add --no-cache openssh && echo "root:Docker!" | chpasswd
 
 # Copy the Azure specific sshd_config file to the /etc/ssh/ directory
 RUN ssh-keygen -A && mkdir -p /var/run/sshd
-COPY .sshd_config /etc/ssh/sshd_config
+COPY azure/.sshd_config /etc/ssh/sshd_config
 
 # Open port 2222 for Azure SSH access
 EXPOSE 80 2222
