@@ -39,6 +39,10 @@
       </main>
     </div>
 
-    <%= govuk_footer %>
+    <%= govuk_footer(meta_items: [
+      { text: "Accessibility", href: accessibility_path },
+      { text: "Cookies", href: cookies_path },
+      { text: "Privacy notice", href: privacy_path },
+    ]) %>
   </body>
 </html>
