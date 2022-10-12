@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   root to: "pages#home"
   get "_sha", to: ->(_) { [200, {}, [ENV.fetch("GIT_SHA", "")]] }
 
+  get "/accessibility", to: "static#accessibility"
+  get "/cookies", to: "static#cookies"
+  get "/privacy", to: "static#privacy"
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
