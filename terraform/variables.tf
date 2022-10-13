@@ -105,6 +105,11 @@ variable "worker_count" {
   default     = null
 }
 
+variable "statuscake_alerts" {
+  type    = map(any)
+  default = {}
+}
+
 variable "domain" {}
 
 locals {
