@@ -7,6 +7,20 @@ if Rails.env.production?
   abort("The Rails environment is running in production mode!")
 end
 require "rspec/rails"
+require "capybara/rspec"
+require "capybara/cuprite"
+
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    timeout: 10,
+    process_timeout: 30,
+    window_size: [1200, 800],
+  )
+end
+Capybara.default_driver = :cuprite
+Capybara.javascript_driver = :cuprite
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
