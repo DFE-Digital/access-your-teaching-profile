@@ -32,6 +32,18 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    timeout: 10,
+    process_timeout: 30,
+    window_size: [1200, 800]
+  )
+end
+Capybara.default_driver = :cuprite
+Capybara.javascript_driver = :cuprite
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
