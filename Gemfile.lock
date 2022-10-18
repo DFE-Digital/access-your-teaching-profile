@@ -174,7 +174,7 @@ GEM
       net-protocol
       timeout
     nio4r (2.5.8)
-    nokogiri (1.13.8-x86_64-linux)
+    nokogiri (1.13.9-x86_64-linux)
       racc (~> 1.4)
     okcomputer (1.18.4)
     pagy (5.10.1)
@@ -292,7 +292,7 @@ GEM
       connection_pool (>= 2.2.5)
       rack (~> 2.0)
       redis (>= 4.5.0, < 5)
-    solargraph (0.47.2)
+    solargraph (0.44.3)
       backport (~> 1.2)
       benchmark
       bundler (>= 1.17.2)
@@ -307,9 +307,9 @@ GEM
       thor (~> 1.0)
       tilt (~> 2.0)
       yard (~> 0.9, >= 0.9.24)
-    solargraph-rails (0.3.1)
+    solargraph-rails (1.0.1)
       activesupport
-      solargraph (>= 0.41.1)
+      solargraph (~> 0.44.2)
     strscan (3.0.4)
     syntax_tree (3.6.3)
       prettier_print
